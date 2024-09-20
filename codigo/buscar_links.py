@@ -48,7 +48,7 @@ def main():
     lista_artistas = []
 
     #for letter in letras:
-    lista_artistas = get_artistas('A')      # ALTERAR LETRA 'A' PARA LETTER DENTRO DO FOR 
+    lista_artistas = get_artistas('Z')      # ALTERAR LETRA 'A' PARA LETTER DENTRO DO FOR 
     caminho_nova_links = os.path.join(os.getcwd(), 'links')
     # Verifica se a nova pasta já existe, caso contrário, cria a pasta
     if not os.path.exists(caminho_nova_links):
@@ -58,13 +58,13 @@ def main():
         lista_musicas = get_musicas_de_artista(artista)
         if len(lista_musicas) > 0:
             #caminho_arquivo = caminho_nova_pasta + '\\' + artista[1:-1] + '.txt'
-            with open(caminho_nova_links + '\\A.txt', 'a') as arquivo:
+            with open(caminho_nova_links + '\\Z.txt', 'a') as arquivo:
                 for musica in lista_musicas:
                     if musica[0] == '/':
                         arquivo.write(musica+'\n')
 
-
-
+print(datetime.now())
 
 main()
 
+print(datetime.now())
