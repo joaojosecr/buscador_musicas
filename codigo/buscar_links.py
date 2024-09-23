@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 import string
 import os
-from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch, helpers
 from datetime import datetime
 
 url = 'https://www.letras.com/letra/Z/artistas.html'
@@ -38,6 +38,7 @@ def get_musicas_de_artista(link_artista):
         link_musica = row.attrs.get('href', '')
         lista_musicas.append(link_musica)
     
+
     return lista_musicas, artista
 
 def get_letra(link_musica):
@@ -55,9 +56,6 @@ def get_letra(link_musica):
         #letra.append(line.text)
     
     return letra, title
-
-
-
 
 def main():
 
@@ -85,42 +83,51 @@ def main():
                             arquivo.write(musica+'\n')
 
 
+def up_musicas_on_es(musicas, artista_nome):
+
+    es = Elasticsearch(["http://localhost:9200"])
+
+    # Lista de músicas
+    
+    # Usar a API de bulk para enviar múltiplos documentos de uma vez
+    response = helpers.bulk(es, musicas)
+
+    for res in response[1]:
+        if res.get('create', {}).get('status') != 201:
+            print(f"Failed to index document: {res}")
+
+    # Contar quantos documentos foram indexados com sucesso
+    print(f"Total documents indexed: {response[0]}" + '  -  ' + artista_nome )
+
 def main_test():
     
-    musicas = []
-   
-    lista_musicas, artista = get_musicas_de_artista('/mamonas-assassinas/')
-    
-    for link_music in lista_musicas:
-        letra,titulo = get_letra(link_music)
-        musica = {"_index": "songs", "_source": {
-            "title": titulo,
-            "artist": artista,
-            "lyrics": letra,
-            }}
-        musicas.append(musica)
-    
-    return musicas
+    letras = list(string.ascii_uppercase)
+    letras.append('1')
+
+    lista_artistas = []
+
+    lista_artistas = get_artistas('Z')
+
+    for artista in lista_artistas:
+        lista_musicas, artista_nome = get_musicas_de_artista(artista)
+        musicas = []
+        if len(lista_musicas) > 0:
+            for link_music in lista_musicas:    
+                if(link_music[0] == '/'):
+                    letra , titulo = get_letra(link_music)
+                    musica = {"_index": "songs", "_source": {
+                        "title": titulo,
+                        "artist": artista_nome,
+                        "lyrics": letra,
+                        }}
+                    musicas.append(musica)
+
+              
+            up_musicas_on_es(musicas, artista_nome)
 
 
 print(datetime.now())
 
-m = main_test()
+main_test()
 
 print(datetime.now())
-
-def set_musica_on_es(artista, titulo, letra):
-    es = Elasticsearch(["http://localhost:9200"])  # Substitua pela URL do seu Elasticsearch
-
-    # Dados da música que você quer enviar
-    musica = {
-        "title": titulo,
-        "artist": artista,
-        "lyrics": letra,
-    }
-
-    # Enviar a música para o índice 'songs'
-    response = es.index(index="songs", body=musica)
-
-    # Verificar a resposta
-    print(response) 
