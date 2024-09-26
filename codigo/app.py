@@ -24,6 +24,8 @@ def get_artistas(letra):
     except Exception as e:
         print("Error: " + str(e))
 
+    
+
     return lista_artistas
 
 def get_musicas_de_artista(link_artista):
@@ -69,6 +71,10 @@ def main():
 
         if not os.path.exists(caminho_letra):
             os.makedirs(caminho_letra)
+
+        with open(caminho_letra + '\\lista_' + letter + '.txt', 'w', encoding='utf-8') as arquivo:
+            for item in lista_artistas:
+                arquivo.write(f"{item}\n")
 
         for artista in lista_artistas:
             lista_musicas = get_musicas_de_artista(artista)        
