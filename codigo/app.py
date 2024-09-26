@@ -1,11 +1,8 @@
 from bs4 import BeautifulSoup 
 import requests
-import string
 import os
-from elasticsearch import Elasticsearch, helpers
 from datetime import datetime
-import time
-import json
+
 
 def get_html(url):
     return requests.get(url, allow_redirects=False).text
@@ -53,7 +50,7 @@ def main():
     # letras = list(string.ascii_uppercase)
     # letras.append('1')
 
-    letras = ['A'] #, 'B', 'C', 'D']             # JOÃO JOSÉ
+    letras = ['A'] #, 'B', 'C', 'D']            # JOÃO JOSÉ
     # letras = ['E', 'F', 'G', 'H']             # ÁLVARO
     # letras = ['I', 'J', 'K', 'L']             # HENRIQUE
     # letras = ['M', 'N', 'O', 'P', 'Z']        # ISA
@@ -77,11 +74,14 @@ def main():
             lista_musicas = get_musicas_de_artista(artista)        
             
             for musica in lista_musicas:
-                html = get_html('https://www.letras.com'+musica) 
-                
-                with open(musica[1:(len(musica)-1)].replace('/', '_')+'.html', 'w', encoding="utf-8") as arquivo:
-                    arquivo.write(html)
-
+                try:
+                    if(musica[0] == '/'):
+                        caminho_nome_arquivo = caminho_letra + '\\' + musica[1:(len(musica)-1)].replace('/', '_')+'.html'
+                        html = get_html('https://www.letras.com'+musica) 
+                        with open(caminho_nome_arquivo, 'w', encoding="utf-8") as arquivo:
+                            arquivo.write(html)
+                except Exception as e:
+                    print(e)
 
 
 
