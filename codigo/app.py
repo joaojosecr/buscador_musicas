@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 import os
 from datetime import datetime
-
+import string
 
 def get_html(url):
     return requests.get(url, allow_redirects=False).text
@@ -29,7 +29,7 @@ def get_artistas(letra):
     return lista_artistas
 
 def get_musicas_de_artista(link_artista):
-
+    
     link_artista = 'https://www.letras.com' + link_artista
     html = get_html(link_artista)
     lista_musicas = [] 
@@ -49,15 +49,8 @@ def get_musicas_de_artista(link_artista):
 
 def main():
 
-    # letras = list(string.ascii_uppercase)
-    # letras.append('1')
-
-    letras = ['A'] #, 'B', 'C', 'D']            # JOÃO JOSÉ
-    # letras = ['E', 'F', 'G', 'H']             # ÁLVARO
-    # letras = ['I', 'J', 'K', 'L']             # HENRIQUE
-    # letras = ['M', 'N', 'O', 'P', 'Z']        # ISA
-    # letras = ['Q', 'R', 'S', 'T', '1']        # JU    
-    # letras = ['U', 'V', 'W', 'X', 'Y']        # RAFAEL
+    letras = list(string.ascii_uppercase)
+    letras.append('1')
 
     for letter in letras:
         lista_artistas = get_artistas(letter)      
@@ -71,7 +64,7 @@ def main():
 
         if not os.path.exists(caminho_letra):
             os.makedirs(caminho_letra)
-
+        
         with open(caminho_letra + '\\lista_' + letter + '.txt', 'w', encoding='utf-8') as arquivo:
             for item in lista_artistas:
                 arquivo.write(f"{item}\n")
@@ -89,13 +82,12 @@ def main():
                 except Exception as e:
                     print(e)
 
+# inicio = datetime.now()
+# print("Inicio: " + str(inicio))
+
+# main()
+
+# print("Fim   : " + str(datetime.now()))
 
 
-inicio = datetime.now()
-print("Inicio: " + str(inicio))
 
-main()
-
-print("Inicio: " + str(inicio))
-
-print("Fim   : " + datetime.now())
