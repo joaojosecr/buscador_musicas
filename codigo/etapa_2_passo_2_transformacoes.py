@@ -208,35 +208,3 @@ os.makedirs(diretorio_limpo, exist_ok=True)
 # for idx in resultados[:3]:  # Mostra os 3 mais relevantes
 #     print(f"Arquivo {idx + 1}: (Similaridade: {similaridades[0][idx]:.2f})")
 
-t = "titulo shoot to thrill artista ac/dc letra all you women who want a man of the streetan do n't know which way you wan na turnjust keep a-com and put your hand out to me'caus i 'm the one who 's gon na to make you burn i 'm gon na take you downoh down down downso do n't you fool aroundi 'm gon na pull it pull it pull the trigger shoot to thrill play to killtoo mani women with too mani pill yeahshoot to thrill play to killi got my gun at the readi gon na fire at will yeah i 'm like evil i get under your skinjust like a bomb that 's readi to blow'caus i 'm illegali got everyth that all you women might need to know i 'm gon na take you downyeah down down downso do n't you fool aroundi 'm gon na pull it pull it pull the trigger shoot to thrill play to killtoo mani women with too mani pill saidshoot to thrill play to killi got my gun at the readi gon na fire at will caus i shoot to thrill and i 'm readi to killi ca n't get enough and i ca n't get my filli shoot to thrill play to kill yeah pull the trigger pull itpul it pull it pull the trigger oh shoot to thrill play to killtoo mani women with too mani pill i saidshoot to thrill play to killi got my gun at the readi gon na fire at will caus i shoot to thrill and i 'm readi to killi ca n't get enough and i ca n't get my fill'caus i shoot to thrill play to kill yeahshoot you downyeah ayyi 'm gon na get you down on the bottom girlshoot youi 'm gon na shoot youoh yeahyeah yeahi 'm gon na shoot you down yeah yeah yeah yeahi 'm gon na get you downdown down down down shoot you shoot you shoot you shoot you downshoot you shoot you shoot you down i 'm gon na shoot to thrillplay to killshoot to thrillah yes"
-
-print(t)
-
-print('\n\n')
-
-print(pre_processar(t))
-
-
-def testar_stemming():
-    # Tokens de teste
-    tokens_ingles = ["running", "runner", "ran", "runs", "easily", "fairly"]
-    tokens_portugues = ["correndo", "corredor", "correu", "correm", "facilmente", "justamente"]
-    
-    # Aplicando stemming com códigos de idioma
-    resultado_ingles = stemming(tokens_ingles, "en")
-    print("Inglês:")
-    print("Antes:", tokens_ingles)
-    print("Depois:", resultado_ingles)
-    
-    resultado_portugues = stemming(tokens_portugues, "pt")
-    print("\nPortuguês:")
-    print("Antes:", tokens_portugues)
-    print("Depois:", resultado_portugues)
-    
-    # Testando idioma não suportado
-    print("\nIdioma não suportado:")
-    resultado_nao_suportado = stemming(tokens_ingles, "alien")
-    print("Resultado:", resultado_nao_suportado)
-
-# Executa os testes
-testar_stemming()
