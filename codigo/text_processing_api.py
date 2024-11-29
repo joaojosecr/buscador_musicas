@@ -17,9 +17,9 @@ def process_text():
         input_text = data.get('input_text', '')
 
         # Chama a função main
-        results = main(input_text)
+        results , links = main(input_text)
 
-        return jsonify({'resultados': results})
+        return jsonify({'resultados': results, 'links': links})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

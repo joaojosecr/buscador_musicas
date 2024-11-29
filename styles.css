@@ -67,3 +67,11 @@ button:hover {
   border-radius: 4px;
   margin-bottom: 10px;
 }
+
+.custom-link { 
+    color: black; /* Muda a cor da letra para preto */ 
+    text-decoration: none; /* Remove o sublinhado */ 
+} 
+.custom-link:hover { 
+    color: blue; /* Opcional: Muda a cor quando o link é sobreposto */ 
+}

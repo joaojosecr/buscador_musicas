@@ -326,20 +326,24 @@ def main(query):
     # PARTE COMENTADA ABAIXO É SE QUISER FAZER O PROGRAMA RETORNAR A LISTA DE ARQUIVOS JÁ EM FORMATO DE TEXTO
 
     pags = []
+    links = []
     # Exibe os resultados da busca
     for idx, (indice, sim) in enumerate(resultados):
         print("\n------------------------------------------------------------------------------------------")
         print(f"Resultado {idx + 1}: Documento {indice} com similaridade {sim:.4f}")
-        
+        link = "https://www.letras.com/" + os.path.basename(arquivos[indice])[:-4] 
+        link = link.replace('_', '/')
         with open(arquivos[indice], 'r', encoding='utf-8') as file:
             primeira_linha = file.readline().strip()
             segunda_linha = file.readline().strip()
 
             # Concatena as duas linhas, se necessário
             pagina = primeira_linha + '\n' + segunda_linha
-
             #pagina = file.read()
 
+        links.append(link)
         pags.append(pagina)
-    return pags
+    print(links)
+    print(pags)
+    return pags, links
     #return resultados  # RETORNA LISTA DE ÍNICES

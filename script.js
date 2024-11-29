@@ -21,20 +21,27 @@ document
       if (!response.ok) throw new Error("Erro na busca");
 
       const data = await response.json();
-
+      console.log(data)
       resultsList.innerHTML = "";
       if (data.resultados.length === 0) {
         resultsList.innerHTML = "<li>Nenhum resultado encontrado.</li>";
       } else {
-        data.resultados.forEach((result) => {
+        data.resultados.forEach((result, index) => {
           const li = document.createElement("li");
-          li.textContent = result;
+          
+          const a = document.createElement("a");
+          a.textContent = result;
+          a.href = data.links[index]; // Assume que o segundo parâmetro é retornado como 'links'
+          a.target = "_blank"; // Abre o link em uma nova aba 
+          a.className = 'custom-link'; // Aplica a classe personalizada 
+          
+          li.appendChild(a);
           resultsList.appendChild(li);
         });
       }
     } catch (error) {
       resultsList.innerHTML =
         "<li>Erro ao buscar os resultados. Tente novamente.</li>";
-      console.error(error);
+      console.error("Erro:", error);
     }
   });
