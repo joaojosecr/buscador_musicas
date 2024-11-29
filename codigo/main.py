@@ -14,6 +14,7 @@ from nltk.stem import SnowballStemmer
 from nltk.tokenize import word_tokenize
 from langdetect import detect
 
+# MAIN ATUALIZADA
 
 # Função para limpar dados html e deixar apenas o texto de interesse (titulo, artista e letra)
 def limpar_dados(caminho_arquivo, caminho_destino):
@@ -58,6 +59,14 @@ def limpar_dados(caminho_arquivo, caminho_destino):
     except Exception as e:
         print(f"Erro ao processar {caminho_arquivo}: {e}")
 
+def filtrar_limpar_dados(diretorio_origem, diretorio_limpo ):
+    for nome_arquivo in os.listdir(diretorio_origem):
+        caminho_arquivo = os.path.join(diretorio_origem, nome_arquivo)
+        caminho_destino = os.path.join(diretorio_limpo, nome_arquivo)
+
+        if os.path.isfile(caminho_arquivo):  # Certificar que é um arquivo
+            limpar_dados(caminho_arquivo, caminho_destino)
+
 # Função para detectar o idioma
 def detectar_idioma(texto):
     try:
@@ -97,22 +106,10 @@ def remover_stopwords(tokens, idioma):
     return [token for token in tokens if token not in stop_words]
 
 # Função de Stemming
-def stemming(tokens, cod_idioma):
-    
-    # Mapeamento de códigos ISO 639-1 para nomes usados pelo SnowballStemmer
-    ISO_TO_SNOWBALL = {
-        "en": "english",
-        "pt": "portuguese",
-        "es": "spanish",
-        "fr": "french",
-        "de": "german",
-        "it": "italian",
-        # Adicione outros idiomas suportados conforme necessário
-    }
-    idioma = ISO_TO_SNOWBALL.get(cod_idioma)
+def stemming(tokens, idioma):
     
     # Inicializa o SnowballStemmer com base no idioma
-    stemmer = SnowballStemmer(idioma) if idioma in SnowballStemmer.languages else None  # Verifica se o idioma é suportado
+    stemmer = SnowballStemmer(idioma_para_nome(idioma)) if idioma in SnowballStemmer.languages else None  # Verifica se o idioma é suportado
     return [stemmer.stem(token) if stemmer else token for token in tokens]
 
 # Função de Pré-processamento Completo
@@ -137,18 +134,17 @@ def pre_processar(texto):
 
     return texto_processado  # Retorna o texto processado
 
+# Função para listar os arquivos do diretório
 def listar_arquivos_em_diretorio(diretorio):
     return [os.path.join(diretorio, arquivo) for arquivo in os.listdir(diretorio) if arquivo.endswith('.html')]
 
-def avaliar_tempo_espaco_indexacao(diretorio, batch_size=10000):
+# Função para realizar indexação de TF-IDF
+def tf_idf(diretorio, batch_size):
     arquivos = listar_arquivos_em_diretorio(diretorio)  
     vectorizer = TfidfVectorizer(max_features=30000000, ngram_range=(1, 3))  
     tfidf_matrix = None  
     vocabulario_construido = False  
-
-    inicio_tempo = time.time()
-    memoria_inicial = psutil.Process().memory_info().rss  
-
+    
     textos = []
     for idx in range(0, len(arquivos), batch_size):
         batch_arquivos = arquivos[idx:idx+batch_size]
@@ -170,6 +166,15 @@ def avaliar_tempo_espaco_indexacao(diretorio, batch_size=10000):
         print(f"Processados {min(idx + batch_size, len(arquivos))}/{len(arquivos)} arquivos.")
 
     salvar_indice(tfidf_matrix, vectorizer)
+    return tfidf_matrix, vectorizer
+
+# Função para realizar indexação e avaliar tempo e espaço utilizados para processar
+def avaliar_tempo_espaco_indexacao(diretorio, batch_size=10000):
+
+    inicio_tempo = time.time()
+    memoria_inicial = psutil.Process().memory_info().rss  
+
+    tfidf_matrix, vectorizer = tf_idf(diretorio, batch_size)
 
     fim_tempo = time.time()
     memoria_final = psutil.Process().memory_info().rss  
@@ -181,7 +186,6 @@ def avaliar_tempo_espaco_indexacao(diretorio, batch_size=10000):
     print(f"Memória utilizada: {memoria_usada:.2f} MB")
 
     return tfidf_matrix, vectorizer
-
 
 def medir_tamanho_do_indice(tfidf_matrix):
     # Tamanho da matriz esparsa em bytes
@@ -202,6 +206,7 @@ def carregar_indice(caminho_tfidf='indice_tfidf.pkl', caminho_vectorizer='vector
     print(f"Índice TF-IDF e Vetorizador carregados de {caminho_tfidf} e {caminho_vectorizer}.")
     return tfidf_matrix, vectorizer
 
+# Função para buscar trecho de texto na base de dados TF-IDF com 1 retorno
 def buscar_texto(query, tfidf_matrix, vectorizer):
     # Transforma a consulta no mesmo formato que os documentos
     query_tfidf = vectorizer.transform([query])
@@ -213,6 +218,7 @@ def buscar_texto(query, tfidf_matrix, vectorizer):
     indice_mais_similar = similaridade.argmax()
     return indice_mais_similar, similaridade[0][indice_mais_similar]
 
+# Função para buscar trecho de texto na base de dados TF-IDF com multiplos retornos
 def buscar_texto_multiple(query, tfidf_matrix, vectorizer, limiar, top_n):
     
     # Transformar a query para o formato TF-IDF
@@ -234,31 +240,7 @@ def buscar_texto_multiple(query, tfidf_matrix, vectorizer, limiar, top_n):
     # Se houver resultados, retorna os top_n documentos
     return resultados[:top_n]
 
-# Diretórios de origem e destino
-diretorio_origem = os.path.join( 'paginas/A')
-diretorio_limpo = os.path.join(os.getcwd(), 'paginas_processadas_n/A')
-diretorio_transformado = os.path.join(os.getcwd(), 'paginas_processadas_n/A_transformado/')
-
-
-# Criar o diretório de destino, se não existir
-os.makedirs(diretorio_limpo, exist_ok=True)
-
-
-
-# LIMPAR DADOS
-
-# Iterar pelos arquivos no diretório de origem
-# for nome_arquivo in os.listdir(diretorio_origem):
-#     caminho_arquivo = os.path.join(diretorio_origem, nome_arquivo)
-#     caminho_destino = os.path.join(diretorio_limpo, nome_arquivo)
-    
-#     if os.path.isfile(caminho_arquivo):  # Certificar que é um arquivo
-#         limpar_dados(caminho_arquivo, caminho_destino)
-
-
-# # TRANSFORMAR DADOS
-
-def transforma_dados():
+def transforma_dados(diretorio_limpo, diretorio_transformado):
 
     arquivos = listar_arquivos_em_diretorio(diretorio_limpo)
 
@@ -298,10 +280,26 @@ def transforma_dados():
     print(f'Vocabulário salvo em {caminho_arquivo}')
 
 
+# LIMPAR DADOS                  ##############################################################################################################
 
-#transforma_dados()
+# diretorio_origem = os.path.join( 'paginas/A')
+# diretorio_limpo = os.path.join(os.getcwd(), 'paginas_processadas_n/A')
+# diretorio_transformado = os.path.join(os.getcwd(), 'paginas_processadas_n/A_transformado/')
+
+# # Criar o diretório de destino, se não existir
+# os.makedirs(diretorio_limpo, exist_ok=True)
+
+# filtrar_limpar_dados( diretorio_origem, diretorio_limpo)
+
+
+# # TRANSFORMAR DADOS           ##############################################################################################################
+
+#transforma_dados(diretorio_limpo, diretorio_transformado)
+
+
 
 ##############################################################################################################################################
+
 # A Fault Line, a Fault Of Mine
 # Power Of Persuasion
 # Birds Of Prey -- We havent burned these bridges for the last time so i'll get the gas
@@ -309,34 +307,16 @@ def transforma_dados():
 # Cassandra -- Sorry Cassandra, I misunderstood, now the last day is dawning Some of us wanted
 # Imagining My Man -- I'm going to answer protected It can be so hard to forgive It's not what I thought
 
-# tfidf_matrix, vectorizer = carregar_indice()
-
-# query = "I'm going to answer protected It can be so hard to forgive It's not what I thought" 
-# limiar = 0.1
-# top_n = 10
-
-
-# print("===========================================================================================\nResultados para pesquisa de: ",query)
-# resultados = buscar_texto_multiple(query, tfidf_matrix, vectorizer, limiar, top_n)
-# arquivos = listar_arquivos_em_diretorio(diretorio_limpo)
-# # Exibe os resultados da busca
-# for idx, (indice, sim) in enumerate(resultados):
-#     print("\n------------------------------------------------------------------------------------------")
-#     print(f"Resultado {idx + 1}: Documento {indice} com similaridade {sim:.4f}")
-    
-#     with open(arquivos[indice], 'r', encoding='utf-8') as file:
-#         primeira_linha = file.readline().strip()
-#         segunda_linha = file.readline().strip()
-
-#         # Concatena as duas linhas, se necessário
-#         pagina = primeira_linha + '\n' + segunda_linha
-
-#         #pagina = file.read()
-
-#     print(pagina[0:100])
-    
 
 def main(query):
+
+    diretorio_origem = os.path.join( 'paginas/A')
+    diretorio_limpo = os.path.join(os.getcwd(), 'paginas_processadas_n/A')
+    diretorio_transformado = os.path.join(os.getcwd(), 'paginas_processadas_n/A_transformado/')
+
+    # Criar o diretório de destino, se não existir
+    os.makedirs(diretorio_limpo, exist_ok=True)
+
 
     tfidf_matrix, vectorizer = carregar_indice()
 
@@ -351,21 +331,21 @@ def main(query):
 
     # PARTE COMENTADA ABAIXO É SE QUISER FAZER O PROGRAMA RETORNAR A LISTA DE ARQUIVOS JÁ EM FORMATO DE TEXTO
 
-
-    # # Exibe os resultados da busca
-    # for idx, (indice, sim) in enumerate(resultados):
-    #     print("\n------------------------------------------------------------------------------------------")
-    #     print(f"Resultado {idx + 1}: Documento {indice} com similaridade {sim:.4f}")
+    pags = []
+    # Exibe os resultados da busca
+    for idx, (indice, sim) in enumerate(resultados):
+        print("\n------------------------------------------------------------------------------------------")
+        print(f"Resultado {idx + 1}: Documento {indice} com similaridade {sim:.4f}")
         
-    #     with open(arquivos[indice], 'r', encoding='utf-8') as file:
-    #         primeira_linha = file.readline().strip()
-    #         segunda_linha = file.readline().strip()
+        with open(arquivos[indice], 'r', encoding='utf-8') as file:
+            primeira_linha = file.readline().strip()
+            segunda_linha = file.readline().strip()
 
-    #         # Concatena as duas linhas, se necessário
-    #         pagina = primeira_linha + '\n' + segunda_linha
+            # Concatena as duas linhas, se necessário
+            pagina = primeira_linha + '\n' + segunda_linha
 
-    #         #pagina = file.read()
+            #pagina = file.read()
 
-    #     print(pagina[0:100])
-
-    return resultados  # RETORNA LISTA DE ÍNICES
+        pags.append(pagina)
+    return pags
+    #return resultados  # RETORNA LISTA DE ÍNICES
