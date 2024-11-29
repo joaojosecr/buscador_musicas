@@ -289,15 +289,15 @@ diretorio_transformado = os.path.join(os.getcwd(), 'paginas_processadas_n/transf
 # Criar o diretório de destino, se não existir
 os.makedirs(diretorio_limpo, exist_ok=True)
 
-#filtrar_limpar_dados( diretorio_origem, diretorio_limpo)
+# filtrar_limpar_dados( diretorio_origem, diretorio_limpo)
 
 
-# # TRANSFORMAR DADOS           ##############################################################################################################
+# TRANSFORMAR DADOS           ##############################################################################################################
 
 # transforma_dados(diretorio_limpo, diretorio_transformado)
 
 
-
+tfidf_matrix, vectorizer = carregar_indice()
 ##############################################################################################################################################
 
 # A Fault Line, a Fault Of Mine
@@ -313,7 +313,7 @@ def main(query):
     # Criar o diretório de destino, se não existir
     #os.makedirs(diretorio_limpo, exist_ok=True)
 
-    tfidf_matrix, vectorizer = carregar_indice()
+    
     
     limiar = 0.1
     top_n = 10
