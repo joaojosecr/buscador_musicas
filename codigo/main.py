@@ -50,7 +50,7 @@ def limpar_dados(caminho_arquivo, caminho_destino):
         
         # Criar o conteúdo do arquivo processado
         conteudo_processado = f"Titulo:\n{titulo_texto}\n\nArtista:\n{artista_texto} \n\nLetra:\n{letras_texto}"
-        
+        caminho_destino = caminho_destino[:-4] + 'txt'
         # Salvar o conteúdo no diretório de destino
         with open(caminho_destino, 'w', encoding='utf-8') as file:
             file.write(conteudo_processado)
@@ -282,19 +282,19 @@ def transforma_dados(diretorio_limpo, diretorio_transformado):
 
 # LIMPAR DADOS                  ##############################################################################################################
 
-# diretorio_origem = os.path.join( 'paginas/A')
-# diretorio_limpo = os.path.join(os.getcwd(), 'paginas_processadas_n/A')
-# diretorio_transformado = os.path.join(os.getcwd(), 'paginas_processadas_n/A_transformado/')
+diretorio_origem = os.path.join( 'paginas/A')
+diretorio_limpo = os.path.join(os.getcwd(), 'paginas_processadas_n/processadas')
+diretorio_transformado = os.path.join(os.getcwd(), 'paginas_processadas_n/transformado/')
 
-# # Criar o diretório de destino, se não existir
-# os.makedirs(diretorio_limpo, exist_ok=True)
+# Criar o diretório de destino, se não existir
+os.makedirs(diretorio_limpo, exist_ok=True)
 
-# filtrar_limpar_dados( diretorio_origem, diretorio_limpo)
+#filtrar_limpar_dados( diretorio_origem, diretorio_limpo)
 
 
 # # TRANSFORMAR DADOS           ##############################################################################################################
 
-#transforma_dados(diretorio_limpo, diretorio_transformado)
+transforma_dados(diretorio_limpo, diretorio_transformado)
 
 
 
@@ -310,13 +310,8 @@ def transforma_dados(diretorio_limpo, diretorio_transformado):
 
 def main(query):
 
-    diretorio_origem = os.path.join( 'paginas/A')
-    diretorio_limpo = os.path.join(os.getcwd(), 'paginas_processadas_n/processadas')
-    diretorio_transformado = os.path.join(os.getcwd(), 'paginas_processadas_n/transformado/')
-
     # Criar o diretório de destino, se não existir
-    os.makedirs(diretorio_limpo, exist_ok=True)
-
+    #os.makedirs(diretorio_limpo, exist_ok=True)
 
     tfidf_matrix, vectorizer = carregar_indice()
 
