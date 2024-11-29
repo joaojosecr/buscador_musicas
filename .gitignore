@@ -7,3 +7,4 @@
 /paginas
 indice_tfidf.pkl
 vectorizer.pkl
+vocabulario.txt

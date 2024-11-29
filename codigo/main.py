@@ -270,7 +270,7 @@ def transforma_dados(diretorio_limpo, diretorio_transformado):
     print("Número de termos no vocabulário:", len(vectorizer.get_feature_names_out()))
     vocabulario = vectorizer.get_feature_names_out()
 
-    caminho_arquivo = 'vocabulário.txt'
+    caminho_arquivo = 'vocabulario.txt'
 
     # Abre o arquivo no modo de escrita
     with open(caminho_arquivo, 'w', encoding='utf-8') as f:
@@ -294,7 +294,7 @@ os.makedirs(diretorio_limpo, exist_ok=True)
 
 # # TRANSFORMAR DADOS           ##############################################################################################################
 
-transforma_dados(diretorio_limpo, diretorio_transformado)
+# transforma_dados(diretorio_limpo, diretorio_transformado)
 
 
 
@@ -314,8 +314,7 @@ def main(query):
     #os.makedirs(diretorio_limpo, exist_ok=True)
 
     tfidf_matrix, vectorizer = carregar_indice()
-
-    query = "I'm going to answer protected It can be so hard to forgive It's not what I thought" 
+    
     limiar = 0.1
     top_n = 10
 
