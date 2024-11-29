@@ -4,6 +4,8 @@ import os
 from datetime import datetime
 import string
 
+# COLETA DE DADOS ATUALIZADA
+
 def get_html(url):
     return requests.get(url, allow_redirects=False).text
 
@@ -48,7 +50,7 @@ def get_musicas_de_artista(link_artista):
     return lista_musicas
 
 def main():
-
+   
     letras = list(string.ascii_uppercase)
     letras.append('1')
 

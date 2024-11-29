@@ -14,8 +14,7 @@ from nltk.stem import SnowballStemmer
 from nltk.tokenize import word_tokenize
 from langdetect import detect
 
-# main atualizada
-
+# MAIN ATUALIZADA
 
 # Função para limpar dados html e deixar apenas o texto de interesse (titulo, artista e letra)
 def limpar_dados(caminho_arquivo, caminho_destino):
