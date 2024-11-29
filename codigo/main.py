@@ -136,7 +136,7 @@ def pre_processar(texto):
 
 # Função para listar os arquivos do diretório
 def listar_arquivos_em_diretorio(diretorio):
-    return [os.path.join(diretorio, arquivo) for arquivo in os.listdir(diretorio) if arquivo.endswith('.html')]
+    return [os.path.join(diretorio, arquivo) for arquivo in os.listdir(diretorio)]
 
 # Função para realizar indexação de TF-IDF
 def tf_idf(diretorio, batch_size):
@@ -311,8 +311,8 @@ def transforma_dados(diretorio_limpo, diretorio_transformado):
 def main(query):
 
     diretorio_origem = os.path.join( 'paginas/A')
-    diretorio_limpo = os.path.join(os.getcwd(), 'paginas_processadas_n/A')
-    diretorio_transformado = os.path.join(os.getcwd(), 'paginas_processadas_n/A_transformado/')
+    diretorio_limpo = os.path.join(os.getcwd(), 'paginas_processadas_n/processadas')
+    diretorio_transformado = os.path.join(os.getcwd(), 'paginas_processadas_n/transformado/')
 
     # Criar o diretório de destino, se não existir
     os.makedirs(diretorio_limpo, exist_ok=True)
