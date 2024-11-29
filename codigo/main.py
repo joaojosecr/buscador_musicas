@@ -313,8 +313,6 @@ def main(query):
     # Criar o diretório de destino, se não existir
     #os.makedirs(diretorio_limpo, exist_ok=True)
 
-    
-    
     limiar = 0.1
     top_n = 10
 
